@@ -6,76 +6,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/cipher-core.min.js"></script>
-    <style>
-    #encode-error {
-        visibility: hidden;
-        min-width: 250px;
-        margin-left: -125px;
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        border-radius: 2px;
-        padding: 16px;
-        position: fixed;
-        z-index: 1;
-        left: 50%;
-        bottom: 30px;
-        font-size: 17px;
-    }
-
-    #encode-error.show {
-        visibility: visible;
-        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    }
-
-    @-webkit-keyframes fadein {
-        from {
-            bottom: 0;
-            opacity: 0;
-        }
-        to {
-            bottom: 30px;
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadein {
-        from {
-            bottom: 0;
-            opacity: 0;
-        }
-        to {
-            bottom: 30px;
-            opacity: 1;
-        }
-    }
-
-    @-webkit-keyframes fadeout {
-        from {
-            bottom: 30px;
-            opacity: 1;
-        }
-        to {
-            bottom: 0;
-            opacity: 0;
-        }
-    }
-
-    @keyframes fadeout {
-        from {
-            bottom: 30px;
-            opacity: 1;
-        }
-        to {
-            bottom: 0;
-            opacity: 0;
-        }
-    }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/sha256.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="crypt.js"></script>
 </head>
 
 <body>
@@ -83,54 +21,47 @@
         <h1>Encrypt the JSON request</h1>
         <p>Note: Encryption and Decryption should be done at both server and client side</p>
     </div>
-    <div class="container" style="height: 500px">
+    <div class="container">
         <div class="row">
-            <div class="col-sm-5" style="margin-bottom: 100px">
+            <div class="col-sm-5">
                 <h3>Plain JSON Request:</h3>
-                <textarea class="form-control" id="plainJSON"></textarea>
+                <textarea class="form-control" rows="14" id="plainJSON"></textarea>
             </div>
-            <div class="col-sm-2" >
+            <div class="col-sm-2 text-center" style="padding-top: 150px; align-content: center; ">
                 <br />
-                <button type="button" class="btn btn-primary" onclick="encode()">Encode &#8594;</button>
+                <button type="button" class="btn btn-primary" onclick="encode(key)">Encode &#8594;</button>
                 <br />
                 <br />
-                <button type="button" class="btn btn-primary">Decode &#8592;</button>
+                <button type="button" class="btn btn-primary" onclick="decode(key)">Decode &#8592;</button>
             </div>
             <div class="col-sm-5">
                 <h3>Ecrypted JSON Request:</h3>
-                <textarea class="form-control" id="encryptedJSON"></textarea>
+                <textarea class="form-control" rows="14" id="encryptedJSON"></textarea>
             </div>
         </div>
     </div>
-    <div id="encode-error">Error while parsing the JSON..</div>
+    <div id="encode-error">Error while parsing/Encoding the JSON..</div>
+    <div id="decode-error">Error while Decoding..</div>
     <script>
-    function encode() {
-        var plainJSON = document.getElementById("plainJSON").value;
-        try {
-            jsonReq = JSON.parse(plainJSON);
-        } catch (ex) {
-            errorToast("encode-error");
-        }
-
-        var CryptoJS = require("crypto-js");
-
-        var data = [{ id: 1 }, { id: 2 }]
-
-        // Encrypt 
-        var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), 'secret key 123');
-
-        // Decrypt 
-        var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), 'secret key 123');
-        var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-        console.log(decryptedData);
+    var key = "secret";
+    var tmpJSON = {
+        "key 1": "Sample Text",
+        "key 2": 123.11,
+        "key 3": true
     }
 
-    function errorToast(id) {
-        var x = document.getElementById(id);
-        x.className = "show";
-        setTimeout(function() { x.className = x.className.replace("show", ""); }, 2000);
-    }
+    document.getElementById("plainJSON").value = JSON.stringify(tmpJSON, undefined, 4);
+
+    /***
+        Note: 
+        var a = 1;
+        the above declaration is obfuscated using the following site. if we use this we can't even debug the code in the console. 
+        So it would be hard to retrieve the data from cosole.
+        https://obfuscator.io/
+    */
+
+    var _0x3204=['return\x20(function()\x20','{}.constructor(\x22return\x20this\x22)(\x20)','RoQOJ','console','iMNsx','log','error','yUXis','debu','gger','call','exception','trace','constructor','CSEuL','while\x20(true)\x20{}','counter','kAwZW','apply','function\x20*\x5c(\x20*\x5c)','\x5c+\x5c+\x20*(?:_0x(?:[a-f0-9]){4,6}|(?:\x5cb|\x5cd)[a-z0-9]{1,4}(?:\x5cb|\x5cd))','test','chain','input','TjRld','egTGC'];(function(_0x4edfb9,_0x244128){var _0x4f8796=function(_0x5e64f2){while(--_0x5e64f2){_0x4edfb9['push'](_0x4edfb9['shift']());}};_0x4f8796(++_0x244128);}(_0x3204,0x1b1));var _0x3001=function(_0x455d51,_0x8b2cbf){_0x455d51=_0x455d51-0x0;var _0x31bbcf=_0x3204[_0x455d51];return _0x31bbcf;};var _0x131af6=function(){var _0x22e591=!![];return function(_0x105c5a,_0x2baa0d){var _0xe4ff33=_0x22e591?function(){if(_0x2baa0d){if(_0x3001('0x0')!=='myXsm'){var _0x50812d=_0x2baa0d[_0x3001('0x1')](_0x105c5a,arguments);_0x2baa0d=null;return _0x50812d;}else{debuggerProtection(0x0);}}}:function(){};_0x22e591=![];return _0xe4ff33;};}();(function(){_0x131af6(this,function(){var _0x4e0564=new RegExp(_0x3001('0x2'));var _0x30def3=new RegExp(_0x3001('0x3'),'i');var _0x3a869c=_0x1b9661('init');if(!_0x4e0564[_0x3001('0x4')](_0x3a869c+_0x3001('0x5'))||!_0x30def3['test'](_0x3a869c+_0x3001('0x6'))){_0x3a869c('0');}else{_0x1b9661();}})();}());setInterval(function(){_0x1b9661();},0xfa0);var _0x22d188=function(){var _0x437c4b=!![];return function(_0x50c13f,_0x1c51e9){var _0x5f159c=_0x437c4b?function(){if(_0x3001('0x7')==='kTifE'){_0x1b9661();}else{if(_0x1c51e9){var _0x343e9a=_0x1c51e9['apply'](_0x50c13f,arguments);_0x1c51e9=null;return _0x343e9a;}}}:function(){};_0x437c4b=![];return _0x5f159c;};}();var _0x1fd31c=_0x22d188(this,function(){var _0x45a21f=function(){};var _0x208b6e;try{if('egTGC'===_0x3001('0x8')){var _0x4932e7=Function(_0x3001('0x9')+_0x3001('0xa')+');');_0x208b6e=_0x4932e7();}else{var _0x5b6651=Function(_0x3001('0x9')+_0x3001('0xa')+');');_0x208b6e=_0x5b6651();}}catch(_0x10931d){if(_0x3001('0xb')==='LozNv'){return debuggerProtection;}else{_0x208b6e=window;}}if(!_0x208b6e[_0x3001('0xc')]){if('CXqCn'!==_0x3001('0xd')){_0x208b6e[_0x3001('0xc')]=function(_0x1bcbad){var _0xe8d0fa={};_0xe8d0fa[_0x3001('0xe')]=_0x1bcbad;_0xe8d0fa['warn']=_0x1bcbad;_0xe8d0fa['debug']=_0x1bcbad;_0xe8d0fa['info']=_0x1bcbad;_0xe8d0fa[_0x3001('0xf')]=_0x1bcbad;_0xe8d0fa['exception']=_0x1bcbad;_0xe8d0fa['trace']=_0x1bcbad;return _0xe8d0fa;}(_0x45a21f);}else{if(fn){var _0x1e843f=fn['apply'](context,arguments);fn=null;return _0x1e843f;}}}else{if(_0x3001('0x10')!=='yUXis'){(function(){return!![];}['constructor'](_0x3001('0x11')+_0x3001('0x12'))[_0x3001('0x13')]('action'));}else{_0x208b6e[_0x3001('0xc')]['log']=_0x45a21f;_0x208b6e['console']['warn']=_0x45a21f;_0x208b6e['console']['debug']=_0x45a21f;_0x208b6e['console']['info']=_0x45a21f;_0x208b6e[_0x3001('0xc')]['error']=_0x45a21f;_0x208b6e['console'][_0x3001('0x14')]=_0x45a21f;_0x208b6e['console'][_0x3001('0x15')]=_0x45a21f;}}});_0x1fd31c();var a=0x1;function _0x1b9661(_0x4024eb){function _0x538923(_0x3a12c6){if('NvlPw'!=='NvlPw'){(function(){return![];}[_0x3001('0x16')]('debu'+_0x3001('0x12'))['apply']('stateObject'));}else{if(typeof _0x3a12c6==='string'){if(_0x3001('0x17')!=='RKJmD'){return function(_0x9ee86b){}[_0x3001('0x16')](_0x3001('0x18'))['apply'](_0x3001('0x19'));}else{return function(_0x26930d){}['constructor'](_0x3001('0x18'))['apply'](_0x3001('0x19'));}}else{if((''+_0x3a12c6/_0x3a12c6)['length']!==0x1||_0x3a12c6%0x14===0x0){(function(){return!![];}['constructor'](_0x3001('0x11')+'gger')[_0x3001('0x13')]('action'));}else{(function(){return![];}['constructor']('debu'+'gger')['apply']('stateObject'));}}_0x538923(++_0x3a12c6);}}try{if(_0x4024eb){return _0x538923;}else{_0x538923(0x0);}}catch(_0x1093df){}};
+    
     </script>
 </body>
 
