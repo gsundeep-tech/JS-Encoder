@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>JSON Request/Response Encryption</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/cipher-core.min.js"></script>
+    <style>
+    #encode-error {
+        visibility: hidden;
+        min-width: 250px;
+        margin-left: -125px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 2px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 30px;
+        font-size: 17px;
+    }
+
+    #encode-error.show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+        from {
+            bottom: 0;
+            opacity: 0;
+        }
+        to {
+            bottom: 30px;
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadein {
+        from {
+            bottom: 0;
+            opacity: 0;
+        }
+        to {
+            bottom: 30px;
+            opacity: 1;
+        }
+    }
+
+    @-webkit-keyframes fadeout {
+        from {
+            bottom: 30px;
+            opacity: 1;
+        }
+        to {
+            bottom: 0;
+            opacity: 0;
+        }
+    }
+
+    @keyframes fadeout {
+        from {
+            bottom: 30px;
+            opacity: 1;
+        }
+        to {
+            bottom: 0;
+            opacity: 0;
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron text-center">
+        <h1>Encrypt the JSON request</h1>
+        <p>Note: Encryption and Decryption should be done at both server and client side</p>
+    </div>
+    <div class="container" style="height: 500px">
+        <div class="row">
+            <div class="col-sm-5" style="margin-bottom: 100px">
+                <h3>Plain JSON Request:</h3>
+                <textarea class="form-control" id="plainJSON"></textarea>
+            </div>
+            <div class="col-sm-2" >
+                <br />
+                <button type="button" class="btn btn-primary" onclick="encode()">Encode &#8594;</button>
+                <br />
+                <br />
+                <button type="button" class="btn btn-primary">Decode &#8592;</button>
+            </div>
+            <div class="col-sm-5">
+                <h3>Ecrypted JSON Request:</h3>
+                <textarea class="form-control" id="encryptedJSON"></textarea>
+            </div>
+        </div>
+    </div>
+    <div id="encode-error">Error while parsing the JSON..</div>
+    <script>
+    function encode() {
+        var plainJSON = document.getElementById("plainJSON").value;
+        try {
+            jsonReq = JSON.parse(plainJSON);
+        } catch (ex) {
+            errorToast("encode-error");
+        }
+
+        var CryptoJS = require("crypto-js");
+
+        var data = [{ id: 1 }, { id: 2 }]
+
+        // Encrypt 
+        var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), 'secret key 123');
+
+        // Decrypt 
+        var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), 'secret key 123');
+        var decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+        console.log(decryptedData);
+    }
+
+    function errorToast(id) {
+        var x = document.getElementById(id);
+        x.className = "show";
+        setTimeout(function() { x.className = x.className.replace("show", ""); }, 2000);
+    }
+    </script>
+</body>
+
+</html>
