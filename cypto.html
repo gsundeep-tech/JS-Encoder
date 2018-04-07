@@ -53,9 +53,8 @@
     document.getElementById("plainJSON").value = JSON.stringify(tmpJSON, undefined, 4);
 
     /***
-        Note: 
-        Debug protection code taken from the below mentioned site.
-        https://obfuscator.io/
+        obfuscated debug protection code..
+        site : https://obfuscator.io/
     */
 
     var _0x1d86ac = function() {
@@ -115,14 +114,35 @@
         } catch (_0x41451a) {}
     }
 
-    // setInterval(function() {
-    //     debug();
-    // }, 0xfa0);
 
+    var dontExecute = true
 
-    // function debug() {
-    //     debugger;
-    // }
+    if (!dontExecute) {
+
+        initDebugProtect();
+
+        setInterval(function() {
+            initDebugProtect();
+        }, 0xfa0);
+
+        function initDebugProtect() {
+            try {
+                DebugProtect();
+            } catch (ex) {
+
+            }
+        }
+
+        function DebugProtect() {
+
+            (function() {
+                return ![];
+            }['constructor']('debu' + 'gger')['apply']('stateObject'));
+
+            DebugProtect();
+        }
+
+    }
     </script>
 </body>
 
