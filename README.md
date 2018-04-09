@@ -1,1 +1,1 @@
-# JS Encoder
+# JS Encrypter
